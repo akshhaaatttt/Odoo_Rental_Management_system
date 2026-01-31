@@ -126,10 +126,18 @@ export const adminAPI = {
   
   // Reports
   getReports: (params) => api.get('/admin/reports', { params }),
-  exportReport: (type, format, dateRange) => api.get('/admin/reports/export', { 
-    params: { type, format, ...dateRange }, 
-    responseType: 'blob' 
-  }),
+  exportReport: (type, format, dateRange) => {
+    if (format === 'csv') {
+      return api.get('/admin/reports/export', { 
+        params: { type, format, ...dateRange }, 
+        responseType: 'blob' 
+      });
+    } else {
+      return api.get('/admin/reports/export', { 
+        params: { type, format, ...dateRange }
+      });
+    }
+  },
   
   // Settings
   getSettings: () => api.get('/admin/settings'),

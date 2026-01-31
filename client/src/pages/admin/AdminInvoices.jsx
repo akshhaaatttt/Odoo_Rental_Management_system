@@ -31,14 +31,21 @@ export default function AdminInvoices() {
 
   const handleRecordPayment = async (invoiceId) => {
     const amount = prompt('Enter payment amount:');
-    if (!amount) return;
+    if (!amount || amount.trim() === '') return;
+
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      toast.error('Please enter a valid payment amount');
+      return;
+    }
 
     try {
-      await invoiceAPI.recordPayment(invoiceId, parseFloat(amount));
+      await invoiceAPI.recordPayment(invoiceId, parsedAmount);
       toast.success('Payment recorded successfully');
       fetchInvoices();
     } catch (error) {
-      toast.error('Failed to record payment');
+      console.error('Payment error:', error);
+      toast.error(error.response?.data?.message || 'Failed to record payment');
     }
   };
 
@@ -55,13 +62,13 @@ export default function AdminInvoices() {
   const calculateTotalRevenue = () => {
     return invoices
       .filter(inv => inv.status === 'PAID')
-      .reduce((sum, inv) => sum + parseFloat(inv.totalAmount || 0), 0);
+      .reduce((sum, inv) => sum + parseFloat(inv.order?.totalAmount || 0), 0);
   };
 
   const calculatePendingRevenue = () => {
     return invoices
       .filter(inv => ['DRAFT', 'POSTED'].includes(inv.status))
-      .reduce((sum, inv) => sum + parseFloat(inv.totalAmount || 0), 0);
+      .reduce((sum, inv) => sum + parseFloat(inv.order?.totalAmount || 0), 0);
   };
 
   if (loading) {
@@ -156,9 +163,9 @@ export default function AdminInvoices() {
                     <div className="flex items-center gap-3">
                       <FileText className="h-5 w-5 text-purple-600" />
                       <div>
-                        <p className="font-semibold">Invoice #{invoice.invoiceRef}</p>
+                        <p className="font-semibold">Invoice #{invoice.invoiceNumber}</p>
                         <p className="text-sm text-gray-600">
-                          Order: {invoice.order?.orderRef}
+                          Order: {invoice.order?.orderReference}
                         </p>
                         <p className="text-sm text-gray-500">
                           Vendor: {invoice.order?.vendor?.companyName || invoice.order?.vendor?.firstName}
@@ -169,9 +176,9 @@ export default function AdminInvoices() {
 
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="font-bold text-lg">₹{parseFloat(invoice.totalAmount).toFixed(2)}</p>
+                      <p className="font-bold text-lg">₹{parseFloat(invoice.order?.totalAmount || 0).toFixed(2)}</p>
                       <p className="text-sm text-gray-600">
-                        GST: ₹{parseFloat(invoice.gst || 0).toFixed(2)}
+                        GST: ₹{(parseFloat(invoice.order?.totalAmount || 0) * 0.18).toFixed(2)}
                       </p>
                     </div>
 

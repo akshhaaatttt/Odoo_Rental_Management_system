@@ -283,20 +283,23 @@ export default function OrdersKanban() {
           </CardContent>
         </Card>
       ) : view === 'kanban' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="flex gap-4 overflow-x-auto pb-4">
           {Object.entries(ORDER_STATUSES).map(([status, config]) => (
-            <div key={status} className="flex flex-col">
-              <div className={`${config.color} px-4 py-3 rounded-t-lg border-2 font-semibold`}>
-                <h3 className="text-sm">{config.label}</h3>
+            <div key={status} className="flex flex-col flex-shrink-0 w-80">
+              <div className={`${config.color} px-4 py-3 rounded-t-lg border font-semibold`}>
+                <h3 className="text-sm flex items-center gap-2">
+                  <span>{config.icon}</span>
+                  {config.label}
+                </h3>
                 <p className="text-xs opacity-75 mt-1">
                   {filteredGroupedOrders[status]?.length || 0} orders
                 </p>
               </div>
-              <div className="space-y-3 bg-gray-50 p-3 rounded-b-lg min-h-[200px] border-2 border-t-0 border-gray-200">
+              <div className="space-y-3 bg-gray-50 p-3 rounded-b-lg min-h-[400px] flex-1 border border-t-0 border-gray-200 overflow-y-auto max-h-[calc(100vh-300px)]">
                 {filteredGroupedOrders[status]?.map((order) => (
                   <Card 
                     key={order.id} 
-                    className="hover:shadow-md transition-shadow cursor-pointer bg-white"
+                    className="hover:shadow-lg transition-all cursor-pointer bg-white border border-gray-200"
                     onClick={() => navigate(`/dashboard/orders/${order.id}`)}
                   >
                     <CardContent className="p-4">

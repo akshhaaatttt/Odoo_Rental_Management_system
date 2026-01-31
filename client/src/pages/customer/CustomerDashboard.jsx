@@ -7,6 +7,7 @@ import {
   Calendar, DollarSign, FileText, CreditCard, ShoppingBag
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import DownloadInvoiceButton from '@/components/DownloadInvoiceButton';
 import toast from 'react-hot-toast';
 
 export default function CustomerDashboard() {
@@ -365,18 +366,32 @@ export default function CustomerDashboard() {
                   {order.status === 'INVOICED' && order.invoices?.length > 0 && (
                     <div className="flex gap-3">
                       {order.paymentStatus === 'UNPAID' ? (
-                        <Button
-                          onClick={() => handlePayNow(order.invoices[0].id)}
-                          className="bg-green-600 hover:bg-green-700"
-                        >
-                          <CreditCard className="h-4 w-4 mr-2" />
-                          Pay Now
-                        </Button>
+                        <>
+                          <Button
+                            onClick={() => handlePayNow(order.invoices[0].id)}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <CreditCard className="h-4 w-4 mr-2" />
+                            Pay Now
+                          </Button>
+                          <DownloadInvoiceButton
+                            orderId={order.id}
+                            variant="outline"
+                            size="default"
+                          />
+                        </>
                       ) : (
-                        <span className="flex items-center text-green-600 text-sm font-medium">
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Payment Completed
-                        </span>
+                        <>
+                          <span className="flex items-center text-green-600 text-sm font-medium">
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Payment Completed
+                          </span>
+                          <DownloadInvoiceButton
+                            orderId={order.id}
+                            variant="outline"
+                            size="default"
+                          />
+                        </>
                       )}
                     </div>
                   )}

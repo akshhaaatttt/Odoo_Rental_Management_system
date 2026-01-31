@@ -122,3 +122,18 @@ export const calculateLateFee = (returnDate, actualReturnDate, dailyRate) => {
   
   return lateFeeRate * lateDays;
 };
+
+// Format currency with symbol and 2 decimal places
+export const formatCurrency = (amount) => {
+  return `₹ ${parseFloat(amount).toFixed(2)}`;
+};
+
+// Format date to readable string
+export const formatDate = (date) => {
+  if (!date) return 'N/A';
+  return new Date(date).toLocaleDateString('en-IN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+};

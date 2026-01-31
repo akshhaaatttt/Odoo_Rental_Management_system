@@ -598,10 +598,126 @@ export const exportReport = async (req, res, next) => {
   try {
     const { type, format, startDate, endDate } = req.query;
 
-    // This would be implemented based on specific export requirements
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename=${type}-report-${Date.now()}.csv`);
-    res.send('Report data exported');
+    const dateFilter = {};
+    if (startDate) dateFilter.gte = new Date(startDate);
+    if (endDate) dateFilter.lte = new Date(endDate);
+
+    // Fetch data based on report type
+    let csvData = '';
+    let headers = '';
+    let rows = [];
+
+    if (type === 'all' || type === 'vendor-revenue') {
+      const orders = await prisma.order.findMany({
+        where: {
+          status: { notIn: ['QUOTATION', 'CANCELLED'] },
+          ...(startDate || endDate ? { createdAt: dateFilter } : {})
+        },
+        include: { vendor: true }
+      });
+
+      const revenueByVendor = {};
+      orders.forEach(order => {
+        const vendorId = order.vendorId;
+        const vendorName = order.vendor.companyName || `${order.vendor.firstName} ${order.vendor.lastName}`;
+        
+        if (!revenueByVendor[vendorId]) {
+          revenueByVendor[vendorId] = { 
+            name: vendorName, 
+            revenue: 0,
+            orderCount: 0 
+          };
+        }
+        revenueByVendor[vendorId].revenue += parseFloat(order.totalAmount);
+        revenueByVendor[vendorId].orderCount += 1;
+      });
+
+      headers = 'Vendor Name,Total Revenue,Order Count\n';
+      rows = Object.values(revenueByVendor).map(v => 
+        `"${v.name}",${v.revenue.toFixed(2)},${v.orderCount}`
+      );
+      csvData = headers + rows.join('\n');
+    }
+
+    if (type === 'top-products') {
+      const orders = await prisma.order.findMany({
+        where: {
+          status: { notIn: ['QUOTATION', 'CANCELLED'] },
+          ...(startDate || endDate ? { createdAt: dateFilter } : {})
+        },
+        include: {
+          orderItems: {
+            include: { product: true }
+          }
+        }
+      });
+
+      const productBookings = {};
+      orders.forEach(order => {
+        order.orderItems.forEach(item => {
+          const productId = item.productId;
+          const productName = item.product.name;
+          
+          if (!productBookings[productId]) {
+            productBookings[productId] = { 
+              name: productName, 
+              bookings: 0,
+              totalQuantity: 0,
+              revenue: 0
+            };
+          }
+          productBookings[productId].bookings += 1;
+          productBookings[productId].totalQuantity += item.quantity;
+          productBookings[productId].revenue += parseFloat(item.unitPrice) * item.quantity;
+        });
+      });
+
+      headers = 'Product Name,Total Bookings,Total Quantity,Total Revenue\n';
+      rows = Object.values(productBookings)
+        .sort((a, b) => b.bookings - a.bookings)
+        .map(p => 
+          `"${p.name}",${p.bookings},${p.totalQuantity},${p.revenue.toFixed(2)}`
+        );
+      csvData = headers + rows.join('\n');
+    }
+
+    if (type === 'late-returns') {
+      const lateOrders = await prisma.order.findMany({
+        where: {
+          status: 'LATE',
+          lateFee: { gt: 0 },
+          ...(startDate || endDate ? { createdAt: dateFilter } : {})
+        },
+        include: {
+          vendor: true,
+          customer: true
+        }
+      });
+
+      headers = 'Order Reference,Vendor,Customer,Late Fee,Return Date\n';
+      rows = lateOrders.map(order => 
+        `"${order.orderReference}","${order.vendor.companyName || order.vendor.firstName}","${order.customer.firstName} ${order.customer.lastName}",${parseFloat(order.lateFee).toFixed(2)},"${order.returnDate ? new Date(order.returnDate).toLocaleDateString() : 'N/A'}"`
+      );
+      csvData = headers + rows.join('\n');
+    }
+
+    if (format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename=${type}-report-${Date.now()}.csv`);
+      res.send(csvData);
+    } else if (format === 'pdf') {
+      // For PDF, we'll send a simple response for now
+      // In production, you'd use a library like pdfkit
+      res.json({
+        success: true,
+        message: 'PDF export coming soon. Please use CSV export for now.'
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid format. Use csv or pdf.'
+      });
+    }
   } catch (error) {
     next(error);
   }

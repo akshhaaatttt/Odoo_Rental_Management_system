@@ -19,6 +19,7 @@ import {
 import { orderAPI, productAPI } from '../../lib/api';
 import { useAuthStore } from '../../store';
 import { Button } from '@/components/ui/button';
+import DownloadInvoiceButton from '../../components/DownloadInvoiceButton';
 
 // Order Status Constants matching the system
 const ORDER_STATUS = {
@@ -509,15 +510,26 @@ export default function NewRentalOrder() {
                 </Button>
               )}
 
-              {id && (
-                <Button
-                  onClick={handlePrint}
-                  variant="outline"
-                  className="px-6 py-2"
-                >
-                  <Printer size={18} className="mr-2" />
-                  Print
-                </Button>
+              {id && order && (
+                <>
+                  <Button
+                    onClick={handlePrint}
+                    variant="outline"
+                    className="px-6 py-2"
+                  >
+                    <Printer size={18} className="mr-2" />
+                    Print
+                  </Button>
+
+                  {/* Download Invoice Button - Show for INVOICED orders */}
+                  {[ORDER_STATUS.INVOICED, ORDER_STATUS.PICKEDUP, ORDER_STATUS.RETURNED, ORDER_STATUS.LATE].includes(order.status) && (
+                    <DownloadInvoiceButton
+                      orderId={order.id}
+                      variant="default"
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    />
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { generateInvoiceNumber } from '../utils/helpers.js';
 import { sendInvoiceEmail } from '../utils/email.js';
+import { generateInvoicePDF } from '../utils/invoiceGenerator.js';
 
 const prisma = new PrismaClient();
 
@@ -301,10 +302,12 @@ export const recordPayment = async (req, res, next) => {
     const { id } = req.params;
     const { amount } = req.body;
 
-    if (!amount || amount <= 0) {
+    console.log('Record Payment Request:', { id, amount, body: req.body });
+
+    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
       return res.status(400).json({
         success: false,
-        message: 'Valid payment amount is required'
+        message: `Valid payment amount is required. Received: ${amount}`
       });
     }
 
@@ -339,10 +342,18 @@ export const recordPayment = async (req, res, next) => {
     const newAmountPaid = parseFloat(invoice.amountPaid) + parseFloat(amount);
     const amountDue = parseFloat(invoice.amountDue);
 
+    console.log('Payment calculation:', {
+      currentAmountPaid: invoice.amountPaid,
+      newPayment: amount,
+      newAmountPaid,
+      amountDue,
+      exceedsLimit: newAmountPaid > amountDue
+    });
+
     if (newAmountPaid > amountDue) {
       return res.status(400).json({
         success: false,
-        message: 'Payment amount exceeds amount due'
+        message: `Payment amount exceeds amount due. Current paid: ${invoice.amountPaid}, New payment: ${amount}, Total would be: ${newAmountPaid}, Amount due: ${amountDue}`
       });
     }
 
@@ -498,6 +509,206 @@ export const sendInvoice = async (req, res, next) => {
       }
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Download Invoice PDF
+// @route   GET /api/invoices/:invoiceId/download
+// @access  Private (Customer/Vendor/Admin)
+export const downloadInvoicePDF = async (req, res, next) => {
+  try {
+    const { invoiceId } = req.params;
+
+    // Fetch complete invoice data
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: invoiceId },
+      include: {
+        order: {
+          include: {
+            customer: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                phoneNumber: true,
+                address: true
+              }
+            },
+            vendor: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                phoneNumber: true,
+                address: true,
+                companyName: true,
+                gstin: true
+              }
+            },
+            orderItems: {
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                    rentPrice: true,
+                    rentUnit: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!invoice) {
+      return res.status(404).json({
+        success: false,
+        message: 'Invoice not found'
+      });
+    }
+
+    // Authorization check
+    const userId = req.user.id;
+    const userRole = req.user.role;
+    const order = invoice.order;
+
+    if (
+      userRole !== 'ADMIN' &&
+      order.customerId !== userId &&
+      order.vendorId !== userId
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to download this invoice'
+      });
+    }
+
+    // Prepare data for PDF generation
+    const invoiceData = {
+      invoice,
+      order,
+      customer: order.customer,
+      vendor: order.vendor,
+      orderItems: order.orderItems
+    };
+
+    // Set response headers for PDF download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="invoice_${invoice.invoiceNumber.replace(/\//g, '_')}.pdf"`
+    );
+
+    // Generate and stream PDF
+    generateInvoicePDF(invoiceData, res);
+
+  } catch (error) {
+    console.error('Error generating invoice PDF:', error);
+    next(error);
+  }
+};
+
+// @desc    Download Invoice PDF by Order ID
+// @route   GET /api/invoices/order/:orderId/download
+// @access  Private (Customer/Vendor/Admin)
+export const downloadInvoiceByOrderPDF = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+
+    // Find invoice by order ID
+    const invoice = await prisma.invoice.findFirst({
+      where: { orderId },
+      include: {
+        order: {
+          include: {
+            customer: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                phoneNumber: true,
+                address: true
+              }
+            },
+            vendor: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                phoneNumber: true,
+                address: true,
+                companyName: true,
+                gstin: true
+              }
+            },
+            orderItems: {
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                    rentPrice: true,
+                    rentUnit: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!invoice) {
+      return res.status(404).json({
+        success: false,
+        message: 'Invoice not found for this order'
+      });
+    }
+
+    // Authorization check
+    const userId = req.user.id;
+    const userRole = req.user.role;
+    const order = invoice.order;
+
+    if (
+      userRole !== 'ADMIN' &&
+      order.customerId !== userId &&
+      order.vendorId !== userId
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to download this invoice'
+      });
+    }
+
+    // Prepare data for PDF generation
+    const invoiceData = {
+      invoice,
+      order,
+      customer: order.customer,
+      vendor: order.vendor,
+      orderItems: order.orderItems
+    };
+
+    // Set response headers for PDF download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="invoice_${invoice.invoiceNumber.replace(/\//g, '_')}.pdf"`
+    );
+
+    // Generate and stream PDF
+    generateInvoicePDF(invoiceData, res);
+
+  } catch (error) {
+    console.error('Error generating invoice PDF:', error);
     next(error);
   }
 };

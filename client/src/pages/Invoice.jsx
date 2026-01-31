@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { invoiceAPI } from '@/lib/api';
 import { Download, Printer } from 'lucide-react';
 import toast from 'react-hot-toast';
+import DownloadInvoiceButton from '@/components/DownloadInvoiceButton';
 
 export default function Invoice() {
   const { orderId } = useParams();
@@ -52,10 +53,7 @@ export default function Invoice() {
             <Printer className="h-4 w-4 mr-2" />
             Print
           </Button>
-          <Button>
-            <Download className="h-4 w-4 mr-2" />
-            Download PDF
-          </Button>
+          <DownloadInvoiceButton orderId={orderId} />
         </div>
       </div>
 

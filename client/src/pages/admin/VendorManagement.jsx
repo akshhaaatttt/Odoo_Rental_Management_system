@@ -54,7 +54,7 @@ export default function VendorManagement() {
                   <p className="font-semibold">{vendor.companyName || vendor.firstName + ' ' + vendor.lastName}</p>
                   <p className="text-sm text-gray-600">{vendor.email}</p>
                   <p className="text-sm text-gray-500">
-                    Revenue: ₹{vendor.revenue?.toFixed(2) || '0.00'} | Orders: {vendor.orderCount || 0}
+                    Revenue: ₹{vendor.totalRevenue?.toFixed(2) || '0.00'} | Orders: {vendor.orderCount || 0}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">

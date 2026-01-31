@@ -54,10 +54,12 @@ export default function AdminReports() {
   }, [dateRange]);
 
   const fetchReports = async () => {
+    setLoading(true);
     try {
       const response = await adminAPI.getReports(dateRange);
       setReportData(response.data.data);
     } catch (error) {
+      console.error('Failed to load reports:', error);
       toast.error('Failed to load reports');
     } finally {
       setLoading(false);
@@ -66,8 +68,10 @@ export default function AdminReports() {
 
   const handleExportPDF = async (reportType) => {
     try {
-      await adminAPI.exportReport(reportType, 'pdf', dateRange);
-      toast.success(`${reportType} report exported successfully`);
+      const response = await adminAPI.exportReport(reportType, 'pdf', dateRange);
+      if (response.data.success) {
+        toast.info(response.data.message || 'PDF export coming soon');
+      }
     } catch (error) {
       toast.error('Failed to export report');
     }
@@ -145,7 +149,7 @@ export default function AdminReports() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-600">
-              ₹{reportData.revenue.total.toFixed(2)}
+              ₹{(reportData.revenue?.total || 0).toFixed(2)}
             </div>
           </CardContent>
         </Card>
@@ -158,7 +162,7 @@ export default function AdminReports() {
             <Package className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{reportData.orders.total}</div>
+            <div className="text-3xl font-bold">{reportData.orders?.total || 0}</div>
           </CardContent>
         </Card>
 
@@ -170,7 +174,7 @@ export default function AdminReports() {
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{reportData.vendors.totalVendors}</div>
+            <div className="text-3xl font-bold">{reportData.vendors?.totalVendors || 0}</div>
           </CardContent>
         </Card>
 
@@ -182,7 +186,7 @@ export default function AdminReports() {
             <Package className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{reportData.products.totalProducts}</div>
+            <div className="text-3xl font-bold">{reportData.products?.totalProducts || 0}</div>
           </CardContent>
         </Card>
       </div>
@@ -223,7 +227,7 @@ export default function AdminReports() {
             </div>
           </CardHeader>
           <CardContent>
-            {reportData.revenue.byVendor.length === 0 ? (
+            {!reportData.revenue?.byVendor || reportData.revenue.byVendor.length === 0 ? (
               <p className="text-center text-gray-500 py-4">No data available</p>
             ) : vendorChartType === 'bar' ? (
               <ResponsiveContainer width="100%" height={300}>
@@ -296,7 +300,7 @@ export default function AdminReports() {
             </div>
           </CardHeader>
           <CardContent>
-            {reportData.products.mostRented.length === 0 ? (
+            {!reportData.products?.mostRented || reportData.products.mostRented.length === 0 ? (
               <p className="text-center text-gray-500 py-4">No data available</p>
             ) : productChartType === 'pie' ? (
               <ResponsiveContainer width="100%" height={300}>
@@ -342,7 +346,7 @@ export default function AdminReports() {
             <CardTitle>Orders by Status</CardTitle>
           </CardHeader>
           <CardContent>
-            {reportData.orders.byStatus.length === 0 ? (
+            {!reportData.orders?.byStatus || reportData.orders.byStatus.length === 0 ? (
               <p className="text-center text-gray-500 py-4">No data available</p>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
@@ -370,7 +374,7 @@ export default function AdminReports() {
             </div>
           </CardHeader>
           <CardContent>
-            {reportData.orders.lateReturns.length === 0 ? (
+            {!reportData.orders?.lateReturns || reportData.orders.lateReturns.length === 0 ? (
               <p className="text-center text-gray-500 py-4">No late returns</p>
             ) : (
               <div className="space-y-3">

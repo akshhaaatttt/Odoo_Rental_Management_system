@@ -68,8 +68,8 @@ export default function Signup() {
         email: data.email,
         password: data.password,
         confirmPassword: data.confirmPassword,
-        phoneNumber: data.phoneNumber,
-        address: data.address,
+        phoneNumber: data.phoneNumber || '',
+        address: data.address || '',
         role: data.isVendor ? 'VENDOR' : 'CUSTOMER',
       };
 
@@ -79,9 +79,11 @@ export default function Signup() {
         payload.vendorCategory = data.vendorCategory;
       }
 
+      console.log('Signup payload:', payload);
       const response = await authAPI.signup(payload);
+      console.log('Signup response:', response);
       
-      if (response.data && response.data.data) {
+      if (response.data && response.data.success && response.data.data) {
         const { user, token } = response.data.data;
         setAuth(user, token);
         localStorage.setItem('token', token);
@@ -91,13 +93,19 @@ export default function Signup() {
         
         // Redirect based on role
         if (user.role === 'VENDOR') {
-          toast.info('Your vendor account is pending verification');
+          toast.success('Your vendor account is pending verification', {
+            duration: 4000,
+            icon: 'ℹ️'
+          });
           navigate('/dashboard');
         } else {
           navigate('/');
         }
+      } else {
+        toast.error('Failed to create account - Invalid response');
       }
     } catch (error) {
+      console.error('Signup error:', error);
       const message = error.response?.data?.message || 'Failed to create account';
       toast.error(message);
       
