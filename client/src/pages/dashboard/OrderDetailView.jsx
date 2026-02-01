@@ -497,15 +497,15 @@ export default function OrderDetailView() {
                   <input
                     type="date"
                     value={formData.pickupDate}
-                    disabled
-                    className="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50"
+                    readOnly
+                    className="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50 cursor-default"
                   />
                   <span className="text-gray-500">→</span>
                   <input
                     type="date"
                     value={formData.returnDate}
-                    disabled
-                    className="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50"
+                    readOnly
+                    className="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50 cursor-default"
                   />
                 </div>
               </div>
@@ -514,8 +514,8 @@ export default function OrderDetailView() {
                 <input
                   type="text"
                   value={formatDate(order.createdAt)}
-                  disabled
-                  className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50"
+                  readOnly
+                  className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50 cursor-default"
                 />
               </div>
             </div>

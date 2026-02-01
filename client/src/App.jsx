@@ -165,7 +165,11 @@ function App() {
         <Route index element={<AdminDashboard />} />
         <Route path="vendors" element={<VendorManagement />} />
         <Route path="products" element={<ProductManagement />} />
+        <Route path="products/new" element={<ProductForm />} />
+        <Route path="products/:id/edit" element={<ProductForm />} />
         <Route path="orders" element={<OrderManagement />} />
+        <Route path="orders/new" element={<NewRentalOrder />} />
+        <Route path="orders/:id" element={<NewRentalOrder />} />
         <Route path="invoices" element={<AdminInvoices />} />
         <Route path="returns" element={<AdminReturns />} />
         <Route path="reports" element={<AdminReports />} />

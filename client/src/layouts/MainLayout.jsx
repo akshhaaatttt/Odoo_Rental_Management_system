@@ -16,7 +16,11 @@ export default function MainLayout() {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-purple-600">Rental System Pro</span>
+              <img 
+                src="/logo.avif" 
+                alt="Rental System Logo" 
+                className="w-12 h-12 rounded-full object-cover select-none"
+              />
             </Link>
 
             {/* Navigation */}

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { adminAPI } from '@/lib/api';
-import { Eye, EyeOff, Package } from 'lucide-react';
+import { Eye, EyeOff, Package, Plus, Edit } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ProductManagement() {
@@ -42,7 +43,18 @@ export default function ProductManagement() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-8">Product Management</h1>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Product Management</h1>
+          <p className="text-gray-500 mt-2">Manage all products across vendors</p>
+        </div>
+        <Link to="/admin/products/new">
+          <Button className="bg-purple-600 hover:bg-purple-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Product
+          </Button>
+        </Link>
+      </div>
 
       <Card className="mb-6">
         <CardContent className="p-4">
@@ -86,24 +98,36 @@ export default function ProductManagement() {
                   Stock: {product.quantityOnHand} | Booked: {product.quantityBooked}
                 </p>
               </div>
-              <Button
-                size="sm"
-                className="w-full"
-                variant={product.isPublished ? 'destructive' : 'default'}
-                onClick={() => handlePublish(product.id, !product.isPublished)}
-              >
-                {product.isPublished ? (
-                  <>
-                    <EyeOff className="h-4 w-4 mr-2" />
-                    Unpublish
-                  </>
-                ) : (
-                  <>
-                    <Eye className="h-4 w-4 mr-2" />
-                    Publish
-                  </>
-                )}
-              </Button>
+              <div className="flex gap-2">
+                <Link to={`/admin/products/${product.id}/edit`} className="flex-1">
+                  <Button
+                    size="sm"
+                    className="w-full"
+                    variant="outline"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                </Link>
+                <Button
+                  size="sm"
+                  className="flex-1"
+                  variant={product.isPublished ? 'destructive' : 'default'}
+                  onClick={() => handlePublish(product.id, !product.isPublished)}
+                >
+                  {product.isPublished ? (
+                    <>
+                      <EyeOff className="h-4 w-4 mr-2" />
+                      Unpublish
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-4 w-4 mr-2" />
+                      Publish
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}

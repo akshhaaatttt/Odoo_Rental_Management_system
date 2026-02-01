@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import {
   Send,
@@ -54,7 +54,9 @@ const STATUS_LABELS = {
 export default function NewRentalOrder() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useAuthStore(state => state.user);
+  const isAdminRoute = location.pathname.startsWith('/admin');
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -222,7 +224,8 @@ export default function NewRentalOrder() {
       } else {
         const res = await orderAPI.create(orderData);
         toast.success('Order created successfully');
-        navigate(`/dashboard/orders/${res.data.data.id}`);
+        const redirectPath = isAdminRoute ? `/admin/orders/${res.data.data.id}` : `/dashboard/orders/${res.data.data.id}`;
+        navigate(redirectPath);
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to save order');
@@ -414,7 +417,7 @@ export default function NewRentalOrder() {
           <div className="flex items-center gap-3 mb-4">
             <Button
               className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2"
-              onClick={() => navigate('/dashboard/orders/new')}
+              onClick={() => navigate(isAdminRoute ? '/admin/orders/new' : '/dashboard/orders/new')}
             >
               <Plus size={18} className="mr-2" />
               New
@@ -427,7 +430,7 @@ export default function NewRentalOrder() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                {id ? `Order ${order?.orderReference}` : 'New Rental Order'}
+                {id ? `Order #${order?.orderReference || ''}` : 'New Rental Order'}
               </h1>
               {order && (
                 <div className="flex items-center gap-2 mt-2">
@@ -607,8 +610,8 @@ export default function NewRentalOrder() {
               <input
                 type="date"
                 {...register('orderDate')}
-                className="w-full px-3 py-2 border rounded-lg bg-gray-50"
-                disabled
+                className="w-full px-3 py-2 border rounded-lg bg-gray-50 cursor-default"
+                readOnly
               />
             </div>
 

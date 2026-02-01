@@ -2,6 +2,32 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+/**
+ * Calculate reserved quantity for a product
+ * Returns the sum of quantities in CONFIRMED, INVOICED, and PICKEDUP orders
+ */
+const calculateReservedQuantity = async (productId) => {
+  const activeOrders = await prisma.order.findMany({
+    where: {
+      status: { in: ['CONFIRMED', 'INVOICED', 'PICKEDUP'] },
+      orderItems: {
+        some: { productId }
+      }
+    },
+    include: {
+      orderItems: {
+        where: { productId },
+        select: { quantity: true }
+      }
+    }
+  });
+
+  return activeOrders.reduce((total, order) => {
+    const orderQty = order.orderItems.reduce((sum, item) => sum + item.quantity, 0);
+    return total + orderQty;
+  }, 0);
+};
+
 // @desc    Get all products
 // @route   GET /api/products
 // @access  Public
@@ -83,13 +109,25 @@ export const getProducts = async (req, res, next) => {
       orderBy: { createdAt: 'desc' }
     });
 
+    // Calculate reserved quantities for each product
+    const productsWithAvailability = await Promise.all(
+      products.map(async (product) => {
+        const reservedQty = await calculateReservedQuantity(product.id);
+        return {
+          ...product,
+          quantityReserved: reservedQty,
+          quantityAvailable: Math.max(0, product.quantityOnHand - reservedQty)
+        };
+      })
+    );
+
     res.json({
       success: true,
-      count: products.length,
+      count: productsWithAvailability.length,
       total: totalCount,
       page: parseInt(page),
       pages: Math.ceil(totalCount / parseInt(limit)),
-      data: products
+      data: productsWithAvailability
     });
   } catch (error) {
     next(error);
@@ -239,7 +277,9 @@ export const updateProduct = async (req, res, next) => {
       rentPrice,
       rentUnit,
       costPrice,
-      isPublished
+      isPublished,
+      attributes,
+      images
     } = req.body;
 
     // Get existing product
@@ -275,6 +315,37 @@ export const updateProduct = async (req, res, next) => {
     // Only admin can change published status
     if (req.user.role === 'ADMIN' && isPublished !== undefined) {
       updateData.isPublished = isPublished;
+    }
+
+    // Handle attributes update
+    if (attributes) {
+      // Delete existing attributes
+      await prisma.productAttribute.deleteMany({
+        where: { productId: id }
+      });
+      // Create new attributes
+      updateData.attributes = {
+        create: attributes.map(attr => ({
+          name: attr.name,
+          value: attr.value,
+          extraPrice: parseFloat(attr.extraPrice) || 0
+        }))
+      };
+    }
+
+    // Handle images update
+    if (images) {
+      // Delete existing images
+      await prisma.productImage.deleteMany({
+        where: { productId: id }
+      });
+      // Create new images
+      updateData.images = {
+        create: images.map((img, index) => ({
+          url: img.url,
+          isPrimary: img.isPrimary || index === 0
+        }))
+      };
     }
 
     // Update product

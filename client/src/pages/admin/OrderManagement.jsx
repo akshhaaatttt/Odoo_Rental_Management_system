@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { adminAPI } from '@/lib/api';
-import { Download, Package } from 'lucide-react';
+import { Download, Package, Eye, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function OrderManagement() {
@@ -61,11 +62,22 @@ export default function OrderManagement() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Order Management</h1>
-        <Button onClick={handleExport}>
-          <Download className="h-4 w-4 mr-2" />
-          Export CSV
-        </Button>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
+          <p className="text-gray-500 mt-2">View and manage all orders</p>
+        </div>
+        <div className="flex gap-3">
+          <Link to="/admin/orders/new">
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <Plus className="h-4 w-4 mr-2" />
+              New Order
+            </Button>
+          </Link>
+          <Button onClick={handleExport} variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
       {orders.length === 0 ? (
@@ -83,7 +95,7 @@ export default function OrderManagement() {
                 <CardTitle className="flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <Package className="h-5 w-5" />
-                    Order #{order.orderRef}
+                    Order #{order.orderReference || order.id.slice(0, 8)}
                   </span>
                   <span className={`px-3 py-1 rounded text-sm ${getStatusColor(order.status)}`}>
                     {order.status}
@@ -120,10 +132,20 @@ export default function OrderManagement() {
                 </div>
 
                 <div className="mt-4 border-t pt-4">
-                  <p className="text-sm text-gray-600 mb-2">Items: {order.orderItems?.length || 0}</p>
-                  <div className="flex gap-2 text-xs text-gray-500">
-                    <span>Delivery: {order.deliveryMethod}</span>
-                    {order.address && <span>• {order.address.substring(0, 50)}...</span>}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-2">Items: {order.orderItems?.length || 0}</p>
+                      <div className="flex gap-2 text-xs text-gray-500">
+                        <span>Delivery: {order.deliveryMethod}</span>
+                        {order.address && <span>• {order.address.substring(0, 50)}...</span>}
+                      </div>
+                    </div>
+                    <Link to={`/admin/orders/${order.id}`}>
+                      <Button size="sm" variant="outline">
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Details
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </CardContent>

@@ -122,7 +122,7 @@ export default function CustomerDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between select-none">
               <div>
                 <p className="text-sm font-medium text-gray-600">Active Rentals</p>
                 <p className="text-3xl font-bold text-purple-600">{stats.activeCount}</p>
@@ -136,7 +136,7 @@ export default function CustomerDashboard() {
 
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between select-none">
               <div>
                 <p className="text-sm font-medium text-gray-600">Upcoming Returns</p>
                 <p className="text-3xl font-bold text-orange-600">{stats.upcomingCount}</p>
@@ -150,7 +150,7 @@ export default function CustomerDashboard() {
 
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between select-none">
               <div>
                 <p className="text-sm font-medium text-gray-600">Late Returns</p>
                 <p className="text-3xl font-bold text-red-600">{stats.lateCount}</p>
@@ -164,7 +164,7 @@ export default function CustomerDashboard() {
 
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between select-none">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Spent</p>
                 <p className="text-2xl font-bold text-green-600">₹{stats.totalSpent.toFixed(2)}</p>

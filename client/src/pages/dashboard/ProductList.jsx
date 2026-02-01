@@ -79,12 +79,12 @@ export default function ProductList() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
             <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video bg-gray-200 relative">
+              <div className="aspect-video bg-gray-100 relative flex items-center justify-center">
                 {product.images?.[0]?.url ? (
                   <img 
                     src={product.images[0].url} 
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain p-2"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">
@@ -107,8 +107,15 @@ export default function ProductList() {
                     </span>
                     <span className="text-sm text-gray-500">/{product.rentUnit.toLowerCase()}</span>
                   </div>
-                  <div className="text-sm text-gray-600">
-                    Stock: {product.quantityOnHand}
+                  <div className="text-sm">
+                    <div className="text-gray-600">
+                      <span className="font-medium">Available:</span> {product.quantityAvailable ?? product.quantityOnHand}
+                    </div>
+                    {product.quantityReserved > 0 && (
+                      <div className="text-orange-600 text-xs">
+                        Reserved: {product.quantityReserved}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-2">

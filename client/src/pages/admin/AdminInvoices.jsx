@@ -29,26 +29,6 @@ export default function AdminInvoices() {
     }
   };
 
-  const handleRecordPayment = async (invoiceId) => {
-    const amount = prompt('Enter payment amount:');
-    if (!amount || amount.trim() === '') return;
-
-    const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      toast.error('Please enter a valid payment amount');
-      return;
-    }
-
-    try {
-      await invoiceAPI.recordPayment(invoiceId, parsedAmount);
-      toast.success('Payment recorded successfully');
-      fetchInvoices();
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast.error(error.response?.data?.message || 'Failed to record payment');
-    }
-  };
-
   const getStatusColor = (status) => {
     const colors = {
       DRAFT: 'bg-gray-100 text-gray-800',
@@ -165,7 +145,7 @@ export default function AdminInvoices() {
                       <div>
                         <p className="font-semibold">Invoice #{invoice.invoiceNumber}</p>
                         <p className="text-sm text-gray-600">
-                          Order: {invoice.order?.orderReference}
+                          Order: {invoice.order?.orderRef}
                         </p>
                         <p className="text-sm text-gray-500">
                           Vendor: {invoice.order?.vendor?.companyName || invoice.order?.vendor?.firstName}
@@ -186,23 +166,13 @@ export default function AdminInvoices() {
                       {invoice.status}
                     </span>
 
-                    <div className="flex gap-2">
-                      {invoice.status !== 'PAID' && (
-                        <Button
-                          size="sm"
-                          onClick={() => handleRecordPayment(invoice.id)}
-                        >
-                          Record Payment
-                        </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => window.open(`/invoice/${invoice.orderId}`, '_blank')}
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => window.open(`/invoice/${invoice.orderId}`, '_blank')}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               ))}

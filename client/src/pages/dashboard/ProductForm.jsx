@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { productAPI } from '@/lib/api';
 import { ArrowLeft, Plus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useAuthStore } from '@/store';
 
 export default function ProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuthStore();
   const isEditMode = Boolean(id);
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
@@ -45,7 +49,12 @@ export default function ProductForm() {
         costPrice: product.costPrice,
       });
       setAttributes(product.attributes || []);
-      setImages(product.images || []);
+      // Map images to the format expected by the form
+      const mappedImages = (product.images || []).map(img => ({
+        url: img.url,
+        isPrimary: img.isPrimary
+      }));
+      setImages(mappedImages);
     } catch (error) {
       toast.error('Failed to load product');
     }
@@ -105,7 +114,8 @@ export default function ProductForm() {
         await productAPI.createProduct(payload);
         toast.success('Product created successfully');
       }
-      navigate('/dashboard/products');
+      const redirectPath = isAdminRoute ? '/admin/products' : '/dashboard/products';
+      navigate(redirectPath);
     } catch (error) {
       toast.error(isEditMode ? 'Failed to update product' : 'Failed to create product');
     } finally {
@@ -116,7 +126,7 @@ export default function ProductForm() {
   return (
     <div>
       <div className="flex items-center gap-4 mb-8">
-        <Button variant="outline" size="icon" onClick={() => navigate('/dashboard/products')}>
+        <Button variant="outline" size="icon" onClick={() => navigate(isAdminRoute ? '/admin/products' : '/dashboard/products')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
@@ -384,7 +394,7 @@ export default function ProductForm() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate('/dashboard/products')}
+            onClick={() => navigate(isAdminRoute ? '/admin/products' : '/dashboard/products')}
             disabled={loading}
           >
             Cancel

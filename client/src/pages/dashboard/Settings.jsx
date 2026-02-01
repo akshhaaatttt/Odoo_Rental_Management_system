@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/store';
+import { authAPI } from '@/lib/api';
 import { Building, User, Lock, Mail, Phone, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Settings() {
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
 
@@ -33,10 +34,13 @@ export default function Settings() {
     e.preventDefault();
     setLoading(true);
     try {
-      // TODO: Connect to authAPI.updateProfile()
-      toast.success('Profile updated successfully');
+      const response = await authAPI.updateProfile(profileData);
+      if (response.data.success) {
+        updateUser(response.data.data);
+        toast.success('Profile updated successfully');
+      }
     } catch (error) {
-      toast.error('Failed to update profile');
+      toast.error(error.response?.data?.message || 'Failed to update profile');
     } finally {
       setLoading(false);
     }
@@ -48,13 +52,19 @@ export default function Settings() {
       toast.error('Passwords do not match');
       return;
     }
+    if (passwordData.newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
     setLoading(true);
     try {
-      // TODO: Connect to authAPI.changePassword()
-      toast.success('Password changed successfully');
-      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      const response = await authAPI.changePassword(passwordData);
+      if (response.data.success) {
+        toast.success('Password changed successfully');
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      }
     } catch (error) {
-      toast.error('Failed to change password');
+      toast.error(error.response?.data?.message || 'Failed to change password');
     } finally {
       setLoading(false);
     }
@@ -142,8 +152,8 @@ export default function Settings() {
                   id="email"
                   type="email"
                   value={profileData.email}
-                  disabled
-                  className="bg-gray-50"
+                  readOnly
+                  className="bg-gray-50 cursor-default"
                 />
               </div>
 
@@ -201,8 +211,8 @@ export default function Settings() {
                 <Input
                   id="gstin"
                   value={profileData.gstin}
-                  disabled
-                  className="bg-gray-50"
+                  readOnly
+                  className="bg-gray-50 cursor-default"
                 />
                 <p className="text-xs text-gray-500 mt-1">GSTIN cannot be changed. Contact support if needed.</p>
               </div>

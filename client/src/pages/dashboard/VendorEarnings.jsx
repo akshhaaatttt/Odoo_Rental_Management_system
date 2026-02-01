@@ -110,7 +110,7 @@ export default function VendorEarnings() {
               {earnings.orders.slice(0, 10).map((order) => (
                 <div key={order.id} className="flex justify-between items-center border-b pb-3">
                   <div>
-                    <p className="font-medium">Order #{order.orderRef}</p>
+                    <p className="font-medium">Order #{order.orderReference}</p>
                     <p className="text-sm text-gray-500">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </p>
