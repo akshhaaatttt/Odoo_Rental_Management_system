@@ -46,7 +46,11 @@ export default function Products() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+        {/* Enhanced loading spinner with pulse animation */}
+        <div className="relative">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600"></div>
+          <div className="absolute inset-0 animate-ping rounded-full h-16 w-16 border-4 border-purple-400 opacity-20"></div>
+        </div>
       </div>
     );
   }
@@ -104,32 +108,39 @@ export default function Products() {
         </div>
       </div>
 
-      {/* Product Grid */}
+      {/* Product Grid with enhanced empty state */}
       {products.length === 0 ? (
-        <div className="text-center py-12">
-          <Package className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-500">No products found</p>
-        </div>
+        <Card className="text-center py-16 border-2 border-dashed border-gray-300 hover:border-purple-300 transition-colors duration-300">
+          <CardContent>
+            <Package className="h-20 w-20 mx-auto text-gray-400 mb-6 animate-pulse" />
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
+            <p className="text-gray-500 mb-6">Try adjusting your filters or search terms</p>
+            <Button onClick={() => { setSearch(''); setFilters({ minPrice: '', maxPrice: '', type: '' }); fetchProducts(); }} variant="outline">
+              Clear Filters
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
+          {products.map((product, index) => (
             <Link key={product.id} to={`/products/${product.id}`}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="aspect-square bg-gray-200 relative">
+              {/* Enhanced product card with hover effects and subtle animations */}
+              <Card className="group hover:shadow-xl transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-1 hover:border-purple-200">
+                <div className="aspect-square bg-gray-200 relative overflow-hidden">
                   {product.images?.[0]?.url ? (
                     <img
                       src={product.images[0].url}
                       alt={product.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
                     />
                   ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <Package className="h-12 w-12 text-gray-400" />
+                    <div className="flex items-center justify-center h-full group-hover:bg-gray-300 transition-colors duration-200">
+                      <Package className="h-12 w-12 text-gray-400 group-hover:text-gray-500 transition-colors duration-200" />
                     </div>
                   )}
                 </div>
                 <CardContent className="p-4">
-                  <h3 className="font-semibold text-lg mb-2 line-clamp-1">{product.name}</h3>
+                  <h3 className="font-semibold text-lg mb-2 line-clamp-1 group-hover:text-purple-600 transition-colors duration-200">{product.name}</h3>
                   <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
                   <div className="flex items-center justify-between">
                     <div>
@@ -139,7 +150,7 @@ export default function Products() {
                       <span className="text-sm text-gray-500">/{product.rentUnit.toLowerCase()}</span>
                     </div>
                     {(product.quantityAvailable ?? product.quantityOnHand) > 0 ? (
-                      <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                      <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded transition-all duration-200 group-hover:bg-green-100">
                         {product.quantityAvailable ?? product.quantityOnHand} available
                       </span>
                     ) : (

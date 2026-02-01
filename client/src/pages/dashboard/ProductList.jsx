@@ -78,27 +78,27 @@ export default function ProductList() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video bg-gray-100 relative flex items-center justify-center">
+            <Card key={product.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-purple-200">
+              <div className="aspect-video bg-gray-100 relative flex items-center justify-center overflow-hidden">
                 {product.images?.[0]?.url ? (
                   <img 
                     src={product.images[0].url} 
                     alt={product.name}
-                    className="w-full h-full object-contain p-2"
+                    className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <Package className="h-12 w-12 text-gray-400" />
+                  <div className="flex items-center justify-center h-full group-hover:bg-gray-200 transition-colors duration-200">
+                    <Package className="h-12 w-12 text-gray-400 group-hover:text-gray-500 transition-colors duration-200" />
                   </div>
                 )}
-                <div className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-semibold ${
-                  product.isPublished ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                <div className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-semibold transition-all duration-200 ${
+                  product.isPublished ? 'bg-green-100 text-green-800 group-hover:bg-green-200' : 'bg-gray-100 text-gray-800 group-hover:bg-gray-200'
                 }`}>
                   {product.isPublished ? 'Published' : 'Draft'}
                 </div>
               </div>
               <CardContent className="p-4">
-                <h3 className="font-semibold text-lg mb-2 line-clamp-1">{product.name}</h3>
+                <h3 className="font-semibold text-lg mb-2 line-clamp-1 group-hover:text-purple-600 transition-colors duration-200">{product.name}</h3>
                 <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -120,17 +120,17 @@ export default function ProductList() {
                 </div>
                 <div className="flex gap-2">
                   <Link to={`/dashboard/products/${product.id}/edit`} className="flex-1">
-                    <Button variant="outline" className="w-full">
-                      <Edit className="h-4 w-4 mr-2" />
+                    <Button variant="outline" className="w-full group/edit hover:border-purple-300">
+                      <Edit className="h-4 w-4 mr-2 group-hover/edit:scale-110 transition-transform duration-200" />
                       Edit
                     </Button>
                   </Link>
                   <Button
                     variant="outline"
-                    className="text-red-600 hover:bg-red-50"
+                    className="text-red-600 hover:bg-red-50 hover:border-red-300 group/delete"
                     onClick={() => handleDelete(product.id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4 group-hover/delete:scale-110 transition-transform duration-200" />
                   </Button>
                 </div>
               </CardContent>

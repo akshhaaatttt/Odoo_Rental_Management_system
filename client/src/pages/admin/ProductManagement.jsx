@@ -94,9 +94,17 @@ export default function ProductManagement() {
                 <p className="font-bold text-purple-600">
                   ₹{parseFloat(product.rentPrice).toFixed(2)} / {product.rentUnit}
                 </p>
-                <p className="text-sm">
-                  Stock: {product.quantityOnHand} | Booked: {product.quantityBooked}
-                </p>
+                <div className="text-sm">
+                    <div className="text-gray-600">
+                      <span className="font-medium">Available:</span> {product.quantityAvailable ?? product.quantityOnHand}
+                    </div>
+                    {product.quantityReserved > 0 && (
+                      <div className="text-orange-600 text-xs">
+                        Reserved: {product.quantityReserved}
+                      </div>
+                    )}
+                  </div>
+          
               </div>
               <div className="flex gap-2">
                 <Link to={`/admin/products/${product.id}/edit`} className="flex-1">

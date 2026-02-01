@@ -99,8 +99,8 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Quick Actions */}
-      <Card>
+      {/* Quick Actions with enhanced hover effects */}
+      <Card className="hover:shadow-lg transition-shadow duration-300">
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
@@ -108,24 +108,24 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <a
               href="/dashboard/products/new"
-              className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors"
+              className="group flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 hover:shadow-md hover:-translate-y-1"
             >
-              <Package className="h-5 w-5 mr-2 text-purple-600" />
-              <span className="font-medium">Add New Product</span>
+              <Package className="h-5 w-5 mr-2 text-purple-600 group-hover:scale-110 transition-transform duration-200" />
+              <span className="font-medium group-hover:text-purple-700 transition-colors duration-200">Add New Product</span>
             </a>
             <a
               href="/dashboard/orders"
-              className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors"
+              className="group flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-all duration-300 hover:shadow-md hover:-translate-y-1"
             >
-              <ShoppingCart className="h-5 w-5 mr-2 text-orange-600" />
-              <span className="font-medium">View Orders</span>
+              <ShoppingCart className="h-5 w-5 mr-2 text-orange-600 group-hover:scale-110 transition-transform duration-200" />
+              <span className="font-medium group-hover:text-orange-700 transition-colors duration-200">View Orders</span>
             </a>
             <a
               href="/dashboard/reports"
-              className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+              className="group flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 hover:shadow-md hover:-translate-y-1"
             >
-              <DollarSign className="h-5 w-5 mr-2 text-blue-600" />
-              <span className="font-medium">View Reports</span>
+              <DollarSign className="h-5 w-5 mr-2 text-blue-600 group-hover:scale-110 transition-transform duration-200" />
+              <span className="font-medium group-hover:text-blue-700 transition-colors duration-200">View Reports</span>
             </a>
           </div>
         </CardContent>

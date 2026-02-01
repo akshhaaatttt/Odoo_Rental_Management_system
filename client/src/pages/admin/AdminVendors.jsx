@@ -16,7 +16,7 @@ export default function AdminVendors() {
 
   const fetchVendors = async () => {
     try {
-      const response = await adminAPI.getVendors();
+      const response = await adminAPI.getAllVendors();
       setVendors(response.data.data);
     } catch (error) {
       console.error('Failed to fetch vendors:', error);
@@ -28,7 +28,7 @@ export default function AdminVendors() {
 
   const handleVerify = async (vendorId, isVerified) => {
     try {
-      await adminAPI.verifyVendor(vendorId, isVerified);
+      await adminAPI.verifyVendor(vendorId, { isVerified });
       toast.success(`Vendor ${isVerified ? 'approved' : 'rejected'} successfully`);
       fetchVendors();
     } catch (error) {

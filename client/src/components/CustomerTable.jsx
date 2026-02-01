@@ -40,11 +40,11 @@ const CustomerTable = ({ customers }) => {
               <tr
                 key={customer.id}
                 onClick={() => handleRowClick(customer.id)}
-                className="hover:bg-gray-750 transition-colors cursor-pointer"
+                className="hover:bg-gray-750 transition-all duration-200 cursor-pointer group hover:shadow-md"
               >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0 group-hover:scale-110 group-hover:shadow-lg transition-all duration-200">
                       {customer.avatar ? (
                         <img
                           src={customer.avatar}
@@ -56,36 +56,36 @@ const CustomerTable = ({ customers }) => {
                       )}
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-white">
+                      <div className="text-sm font-medium text-white group-hover:text-purple-400 transition-colors duration-200">
                         {customer.name}
                       </div>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <Mail className="w-4 h-4 text-gray-400" />
+                  <div className="flex items-center gap-2 text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-200">
+                    <Mail className="w-4 h-4 text-gray-400 group-hover:text-purple-400 transition-colors duration-200" />
                     {customer.email}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <Phone className="w-4 h-4 text-gray-400" />
+                  <div className="flex items-center gap-2 text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-200">
+                    <Phone className="w-4 h-4 text-gray-400 group-hover:text-purple-400 transition-colors duration-200" />
                     {customer.phone}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm text-gray-300">
+                  <span className="text-sm text-gray-300 group-hover:text-white group-hover:font-medium transition-all duration-200">
                     {customer.totalOrders}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm font-medium text-purple-400">
+                  <span className="text-sm font-medium text-purple-400 group-hover:text-purple-300 transition-colors duration-200">
                     ₹{parseFloat(customer.totalRevenue).toLocaleString('en-IN')}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-200">
                     {new Date(customer.joinedDate).toLocaleDateString('en-IN', {
                       day: 'numeric',
                       month: 'short',

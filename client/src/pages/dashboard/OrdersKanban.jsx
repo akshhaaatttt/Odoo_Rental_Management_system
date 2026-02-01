@@ -414,25 +414,25 @@ export default function OrdersKanban() {
                     <tr 
                       key={order.id}
                       onClick={() => navigate(`/dashboard/orders/${order.id}`)}
-                      className="hover:bg-gray-50 cursor-pointer transition-colors"
+                      className="hover:bg-purple-50 cursor-pointer transition-all duration-200 hover:shadow-sm group"
                     >
-                      <td className="px-6 py-4 text-sm font-medium text-purple-600">
+                      <td className="px-6 py-4 text-sm font-medium text-purple-600 group-hover:text-purple-700 transition-colors duration-200">
                         {order.orderReference}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {formatDate(order.createdAt)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 group-hover:font-medium transition-all duration-200">
                         {order.customer?.firstName} {order.customer?.lastName}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {order.orderItems?.length || 0} item(s)
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 font-medium">
                         ₹{Number(order.totalAmount).toLocaleString()}
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${ORDER_STATUSES[order.status]?.color || 'bg-gray-100 text-gray-800'}`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 group-hover:shadow-md ${ORDER_STATUSES[order.status]?.color || 'bg-gray-100 text-gray-800'}`}>
                           {ORDER_STATUSES[order.status]?.label || order.status}
                         </span>
                       </td>

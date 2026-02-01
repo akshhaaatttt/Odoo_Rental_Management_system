@@ -8,12 +8,12 @@ import {
   addProductAttribute,
   checkAvailability
 } from '../controllers/productController.js';
-import { protect, authorize } from '../middleware/auth.js';
+import { protect, authorize, optionalAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Public routes
-router.get('/', getProducts);
+// Public routes with optional authentication
+router.get('/', optionalAuth, getProducts);
 router.get('/:id', getProduct);
 router.post('/:id/check-availability', checkAvailability);
 

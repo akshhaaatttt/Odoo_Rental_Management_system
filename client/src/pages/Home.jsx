@@ -6,42 +6,50 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-purple-800 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJhIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0wIDQwTDQwIDBaTTQwIDQwTDAgMCIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjYSkiLz48L3N2Zz4=')] opacity-30"></div>
+      {/* Hero Section - Full Screen Cinematic */}
+      <section className="relative h-screen w-full overflow-hidden select-none">
+        {/* Background Image with Blur and Darkening */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1593642532400-2682810df593?q=80&w=2000&auto=format&fit=crop')`,
+            filter: 'brightness(0.5) blur(0.5px)'
+          }}
+        />
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-2 mb-8">
-              <span className="text-sm font-medium">🎉 New vendors joining daily</span>
-            </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
-              Rent Anything,
-              <br />
-              <span className="bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
-                Anytime, Anywhere
-              </span>
-            </h1>
-            <p className="text-lg md:text-xl text-purple-100 max-w-3xl mx-auto leading-relaxed">
-              Your premier multi-vendor marketplace connecting you with quality rental services.
-              From camera equipment to vehicles, discover endless possibilities.
-            </p>
-          </div>
-
-
-
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12">
+        {/* Dark Linear Gradient Overlay - Top to Bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/90" />
+        
+        {/* Hero Content */}
+        <div className="relative h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 text-center">
+          {/* Main Headline - Single Line, Large, Bold */}
+          <h1 
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight"
+            style={{ textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
+          >
+            Rent Everything. Instantly.
+          </h1>
+          
+          {/* Subtle Subtext (Optional) */}
+          <p 
+            className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-3xl mb-12 font-light"
+            style={{ textShadow: '0 2px 10px rgba(0,0,0,0.7)' }}
+          >
+            Electronics. Furniture. Anything.
+          </p>
+          
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
             <Link to="/products">
-              <Button size="lg" className="bg-white text-purple-900 hover:bg-gray-100 font-semibold px-8 py-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
-                Browse All Products
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+              <button className="group relative px-8 py-4 bg-white text-gray-900 rounded-full font-semibold text-lg shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+                Browse Rentals
+                <ArrowRight className="inline-block w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+              </button>
             </Link>
             <Link to="/signup">
-              <Button size="lg" variant="outline" className="border-2 border-white/50 text-white hover:bg-white/10 backdrop-blur-sm font-semibold px-8 py-6 rounded-xl transition-all duration-300">
-                List Your Equipment
-              </Button>
+              <button className="px-8 py-4 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                Start Renting
+              </button>
             </Link>
           </div>
         </div>

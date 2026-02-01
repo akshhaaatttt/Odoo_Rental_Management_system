@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,21 @@ export default function Settings() {
   const { user, updateUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
+
+  // Refresh user data on component mount to get latest verification status
+  useEffect(() => {
+    const refreshUserData = async () => {
+      try {
+        const response = await authAPI.getProfile();
+        if (response.data.success) {
+          updateUser(response.data.data);
+        }
+      } catch (error) {
+        console.error('Failed to refresh user data:', error);
+      }
+    };
+    refreshUserData();
+  }, []);
 
   const [profileData, setProfileData] = useState({
     firstName: user?.firstName || '',
@@ -34,7 +49,20 @@ export default function Settings() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await authAPI.updateProfile(profileData);
+      // Filter out fields based on which tab is active
+      const dataToUpdate = activeTab === 'profile' 
+        ? {
+            firstName: profileData.firstName,
+            lastName: profileData.lastName,
+            phoneNumber: profileData.phoneNumber,
+            address: profileData.address
+          }
+        : {
+            companyName: profileData.companyName,
+            vendorCategory: profileData.vendorCategory
+          };
+
+      const response = await authAPI.updateProfile(dataToUpdate);
       if (response.data.success) {
         updateUser(response.data.data);
         toast.success('Profile updated successfully');

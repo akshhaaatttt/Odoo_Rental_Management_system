@@ -334,18 +334,29 @@ export const updateProfile = async (req, res, next) => {
       lastName,
       phoneNumber,
       address,
-      avatarUrl
+      avatarUrl,
+      companyName,
+      vendorCategory
     } = req.body;
+
+    // Build update data object
+    const updateData = {
+      firstName,
+      lastName,
+      phoneNumber,
+      address,
+      avatarUrl
+    };
+
+    // Add vendor-specific fields if user is a vendor
+    if (req.user.role === 'VENDOR') {
+      if (companyName) updateData.companyName = companyName;
+      if (vendorCategory) updateData.vendorCategory = vendorCategory;
+    }
 
     const user = await prisma.user.update({
       where: { id: req.user.id },
-      data: {
-        firstName,
-        lastName,
-        phoneNumber,
-        address,
-        avatarUrl
-      },
+      data: updateData,
       select: {
         id: true,
         email: true,
@@ -353,6 +364,9 @@ export const updateProfile = async (req, res, next) => {
         lastName: true,
         role: true,
         companyName: true,
+        gstin: true,
+        vendorCategory: true,
+        isVerified: true,
         avatarUrl: true,
         phoneNumber: true,
         address: true

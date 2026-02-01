@@ -174,9 +174,9 @@ export default function ProductDetail() {
                 />
                 <p className="text-sm text-gray-500 mt-1">
                   Available: {product.quantityAvailable ?? product.quantityOnHand} units
-                  {product.quantityReserved > 0 && (
+                  {/* {product.quantityReserved > 0 && (
                     <span className="text-orange-600"> ({product.quantityReserved} reserved)</span>
-                  )}
+                  )} */}
                 </p>
               </div>
 

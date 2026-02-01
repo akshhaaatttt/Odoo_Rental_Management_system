@@ -10,8 +10,8 @@ export default function MainLayout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
+      {/* Header - Transparent with Backdrop Blur */}
+      <header className="bg-transparent backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -25,19 +25,19 @@ export default function MainLayout() {
 
             {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <Link to="/" className="text-gray-700 hover:text-purple-600 font-medium">
+              <Link to="/" className="text-gray-900 hover:text-purple-600 font-medium transition-colors">
                 Home
               </Link>
-              <Link to="/products" className="text-gray-700 hover:text-purple-600 font-medium">
+              <Link to="/products" className="text-gray-900 hover:text-purple-600 font-medium transition-colors">
                 Products
               </Link>
               {isAuthenticated && user?.role === 'CUSTOMER' && (
-                <Link to="/customer/dashboard" className="text-gray-700 hover:text-purple-600 font-medium">
+                <Link to="/customer/dashboard" className="text-gray-900 hover:text-purple-600 font-medium transition-colors">
                   My Dashboard
                 </Link>
               )}
               {isAuthenticated && (user?.role === 'VENDOR' || user?.role === 'ADMIN') && (
-                <Link to="/dashboard" className="text-gray-700 hover:text-purple-600 font-medium">
+                <Link to="/dashboard" className="text-gray-900 hover:text-purple-600 font-medium transition-colors">
                   Dashboard
                 </Link>
               )}
@@ -47,7 +47,7 @@ export default function MainLayout() {
             <div className="flex items-center space-x-4">
               {/* Cart */}
               <Link to="/cart" className="relative">
-                <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-purple-600" />
+                <ShoppingCart className="w-6 h-6 text-gray-900 hover:text-purple-600 transition-colors" />
                 {items.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                     {items.length}
