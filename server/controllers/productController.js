@@ -57,7 +57,10 @@ export const getProducts = async (req, res, next) => {
     }
 
     // Filter by vendor
-    if (vendorId) {
+    // IMPORTANT: If user is a VENDOR, only show their own products
+    if (req.user && req.user.role === 'VENDOR') {
+      whereClause.vendorId = req.user.id;
+    } else if (vendorId) {
       whereClause.vendorId = vendorId;
     }
 
