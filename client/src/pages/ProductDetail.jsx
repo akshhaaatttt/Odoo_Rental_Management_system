@@ -71,8 +71,9 @@ export default function ProductDetail() {
       return;
     }
 
-    if (quantity < 1 || quantity > product.quantityOnHand) {
-      toast.error(`Quantity must be between 1 and ${product.quantityOnHand}`);
+    const availableQty = product.quantityAvailable ?? product.quantityOnHand;
+    if (quantity < 1 || quantity > availableQty) {
+      toast.error(`Quantity must be between 1 and ${availableQty}`);
       return;
     }
 
@@ -169,10 +170,13 @@ export default function ProductDetail() {
                   value={quantity}
                   onChange={(e) => setQuantity(parseInt(e.target.value))}
                   min={1}
-                  max={product.quantityOnHand}
+                  max={product.quantityAvailable ?? product.quantityOnHand}
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Available: {product.quantityOnHand} units
+                  Available: {product.quantityAvailable ?? product.quantityOnHand} units
+                  {product.quantityReserved > 0 && (
+                    <span className="text-orange-600"> ({product.quantityReserved} reserved)</span>
+                  )}
                 </p>
               </div>
 
@@ -189,10 +193,10 @@ export default function ProductDetail() {
             size="lg"
             className="w-full"
             onClick={handleAddToCart}
-            disabled={product.quantityOnHand === 0}
+            disabled={(product.quantityAvailable ?? product.quantityOnHand) === 0}
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
-            Add to Cart
+            {(product.quantityAvailable ?? product.quantityOnHand) === 0 ? 'Out of Stock' : 'Add to Cart'}
           </Button>
 
           {/* Attributes */}

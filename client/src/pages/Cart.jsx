@@ -22,8 +22,8 @@ export default function Cart() {
     return acc;
   }, {});
 
-  const handleRemove = (productId) => {
-    removeItem(productId);
+  const handleRemove = (productId, rentalStart) => {
+    removeItem(productId, rentalStart);
     toast.success('Item removed from cart');
   };
 
@@ -97,7 +97,7 @@ export default function Cart() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleRemove(item.productId)}
+                        onClick={() => handleRemove(item.productId, item.rentalStart)}
                         className="text-red-600 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />

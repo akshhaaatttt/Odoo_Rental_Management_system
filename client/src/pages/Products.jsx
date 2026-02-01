@@ -138,9 +138,9 @@ export default function Products() {
                       </span>
                       <span className="text-sm text-gray-500">/{product.rentUnit.toLowerCase()}</span>
                     </div>
-                    {product.quantityOnHand > 0 ? (
+                    {(product.quantityAvailable ?? product.quantityOnHand) > 0 ? (
                       <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                        Available
+                        {product.quantityAvailable ?? product.quantityOnHand} available
                       </span>
                     ) : (
                       <span className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded">

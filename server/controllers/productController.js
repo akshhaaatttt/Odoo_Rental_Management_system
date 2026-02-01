@@ -165,9 +165,17 @@ export const getProduct = async (req, res, next) => {
       });
     }
 
+    // Calculate reserved and available quantities
+    const quantityReserved = await calculateReservedQuantity(product.id);
+    const quantityAvailable = product.quantityOnHand - quantityReserved;
+
     res.json({
       success: true,
-      data: product
+      data: {
+        ...product,
+        quantityReserved,
+        quantityAvailable
+      }
     });
   } catch (error) {
     next(error);
