@@ -223,11 +223,11 @@ export default function ProductForm() {
                     name="rentPrice"
                     value={formData.rentPrice}
                     onChange={handleInputChange}
-                    step="0.01"
+                    step="1"
                     min="0"
                     required
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
-                    placeholder="0.00"
+                    placeholder="0"
                   />
                 </div>
 
@@ -258,7 +258,7 @@ export default function ProductForm() {
                   min="0"
                   required
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
-                  placeholder="0.00"
+                  placeholder="0"
                 />
                 <p className="text-sm text-gray-500 mt-1">
                   The original purchase cost of the product

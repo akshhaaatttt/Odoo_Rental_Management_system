@@ -98,8 +98,12 @@ export default function Signup() {
             icon: 'ℹ️'
           });
           navigate('/dashboard');
+        } else if (user.role === 'ADMIN') {
+          navigate('/admin');
+        } else if (user.role === 'CUSTOMER') {
+          navigate('/customer/dashboard');
         } else {
-          navigate('/');
+          navigate('/dashboard');
         }
       } else {
         toast.error('Failed to create account - Invalid response');

@@ -22,7 +22,9 @@ const CustomerDetail = () => {
       setCustomer(response.data);
     } catch (err) {
       console.error('Error fetching customer details:', err);
-      setError(err.response?.data?.error || 'Failed to load customer details');
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Failed to load customer details';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

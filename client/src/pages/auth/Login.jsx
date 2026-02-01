@@ -41,7 +41,9 @@ export default function Login() {
         toast.success('Welcome back!');
         
         // Redirect based on role
-        if (user.role === 'VENDOR' || user.role === 'ADMIN') {
+        if (user.role === 'ADMIN') {
+          navigate('/admin');
+        } else if (user.role === 'VENDOR') {
           navigate('/dashboard');
         } else if (user.role === 'CUSTOMER') {
           navigate('/customer/dashboard');

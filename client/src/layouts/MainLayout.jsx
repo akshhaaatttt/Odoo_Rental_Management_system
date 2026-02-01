@@ -53,15 +53,21 @@ export default function MainLayout() {
 
               {/* User Menu */}
               {isAuthenticated ? (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-700">
-                    {user?.firstName}
-                  </span>
+                <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-200">
+                  <div className="flex items-center space-x-3 bg-gray-50 px-4 py-2 rounded-lg">
+                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-md">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">
+                      {user?.firstName}
+                    </span>
+                  </div>
                   <button
                     onClick={logout}
-                    className="text-sm text-purple-600 hover:underline"
+                    className="flex items-center space-x-2 text-sm font-medium text-purple-600 hover:text-purple-700 px-4 py-2 rounded-lg hover:bg-purple-50 transition-colors"
                   >
-                    Logout
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
                   </button>
                 </div>
               ) : (

@@ -33,7 +33,9 @@ const Customers = () => {
       setCustomers(response.data);
     } catch (err) {
       console.error('Error fetching customers:', err);
-      setError(err.response?.data?.error || 'Failed to load customers');
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Failed to load customers';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

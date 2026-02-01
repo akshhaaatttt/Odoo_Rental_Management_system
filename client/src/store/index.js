@@ -23,6 +23,7 @@ export const useAuthStore = create(
           token: null, 
           isAuthenticated: false 
         });
+        window.location.href = '/';
       },
       
       updateUser: (userData) => set((state) => ({
